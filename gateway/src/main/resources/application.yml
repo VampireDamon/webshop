@@ -1,0 +1,58 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  application:
+  # 微服务名称(不用修改)
+    name: api
+  #文件大小限制
+  servlet:
+    multipart:
+      max-file-size: 300MB
+      max-request-size: 300MB
+server:
+  # 程序端口号 (非冲突状态下不用修改)
+  port: 7777
+
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://${eureka.host:192.168.3.146}:${eureka.port:8761}/eureka/
+#  instance:
+##        ip-address: 192.168.3.76
+##        instance-id: 192.168.3.76:api:5555
+#        prefer-ip-address: true
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 30
+    lease-renewal-interval-in-seconds: 10
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      # 注册中心地址(根据部署的不同自行修改)
+      defaultZone: http://${eureka.host:127.0.0.1}:${eureka.port:8762}/eureka/
+zuul:
+  host:
+    # 以下无需修改
+    socket-timeout-millis: 800000
+    connect-timeout-millis: 300000
+  routes:
+    bgmt:
+      path: /bgmt/**
+      sensitiveHeaders:
+      serviceId: bgmt
+  add-proxy-headers: true
+  semaphore:
+    max-semaphores: 2000
+  ribbon-isolation-strategy: semaphore
+ribbon:
+  ConnectTimeout: 50000
+  ReadTimeout: 80000
+hystrix:
+  command:
+     default:
+        execution:
+           isolation:
+                 thread:
+                   timeoutInMilliseconds: 600000

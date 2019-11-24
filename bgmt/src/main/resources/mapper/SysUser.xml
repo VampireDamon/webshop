@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.damon.bgmt.DAO.SysUserDAO">
+    <resultMap id="resultMap" type="com.damon.bgmt.domain.form.SysUserForm"/>
+
+    <!-- 多条件分页查询人员信息-->
+    <select id="findAll" parameterType="string" resultMap="resultMap">
+        SELECT
+        a.*,
+        b.name AS sex_name,
+        c.name AS is_valid_name
+        FROM
+        `sys_user` a
+        LEFT JOIN `sys_dictionaries` b
+        ON a.is_leaf = b.value
+        AND b.ref_code = 'sex'
+        LEFT JOIN `sys_dictionaries` c
+        ON a.is_valid = c.value
+        AND b.ref_code = 'is_valid'
+        WHERE 1=1
+        <if test="name != null and name != ''">
+            AND a.`name` LIKE concat('%',#{name} , '%')
+        </if>
+        <if test="cardId != null and cardId != ''">
+            AND a.`card_id` =#{cardId}
+        </if>
+        <if test="birthday != null and birthday != ''">
+            AND a.`birthday` =#{birthday}
+        </if>
+        <if test="phone != null and phone != ''">
+            AND a.`phone` =#{phone}
+        </if>
+        <if test="sex != null">
+            AND a.`sex` =#{sex}
+        </if>
+        <if test="loginAccount != null and loginAccount != ''">
+            AND a.`login_account` =#{loginAccount}
+        </if>
+        <if test="isValid != null">
+            AND a.`is_valid` =#{isValid}
+        </if>
+        ORDER BY a.name ASC
+        LIMIT #{pageStart, jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+    </select>
+
+    <!-- 根据人员编号查询人员总数-->
+    <select id="findTotal" resultType="int">
+        SELECT
+        COUNT(a.id)
+        FROM
+        `sys_user` a
+        WHERE 1=1
+        <if test="name != null and name != ''">
+            AND a.`name` LIKE concat('%',#{name} , '%')
+        </if>
+        <if test="cardId != null and cardId != ''">
+            AND a.`card_id` =#{cardId}
+        </if>
+        <if test="birthday != null and birthday != ''">
+            AND a.`birthday` =#{birthday}
+        </if>
+        <if test="phone != null and phone != ''">
+            AND a.`phone` =#{phone}
+        </if>
+        <if test="sex != null">
+            AND a.`sex` =#{sex}
+        </if>
+        <if test="loginAccount != null and loginAccount != ''">
+            AND a.`login_account` =#{loginAccount}
+        </if>
+        <if test="isValid != null">
+            AND a.`is_valid` =#{isValid}
+        </if>
+    </select>
+
+    <!-- 插入用户信息 -->
+    <insert id="add" parameterType="com.damon.bgmt.domain.SysUser">
+		INSERT INTO
+		    `sys_user` (
+		  `id`,
+		  `name`,
+		  `card_id`,
+		  `birthday`,
+		  `phone`,
+		  `sex`,
+		  `login_account`,
+		  `login_pass`,
+		  `is_valid`,
+		  `email`,
+		  `update_user_id`,
+		  `update_time`,
+		  `create_user_id`,
+		  `create_time`,
+		  `remark`
+		)
+		VALUES
+		  (
+		  #{id},
+		  #{name},
+		  #{cardId},
+		  #{birthday},
+		  #{phone},
+		  #{sex},
+		  #{loginAccount},
+		  #{loginPass},
+		  #{isValid},
+		  #{email},
+		  #{updateUserId},
+		    #{updateTime},
+		    #{creatUserId},
+		    #{createTime},
+        	#{remark}
+		  )
+	</insert>
+
+    <!--根据人员编号删除人员信息-->
+    <delete id="delete" parameterType="com.damon.bgmt.domain.SysUser">
+	   delete
+       sys_user
+       WHERE
+       id=#{id}
+    </delete>
+
+    <!-- 根据人员ID更新人员信息 -->
+    <update id="update" parameterType="com.damon.bgmt.domain.SysUser">
+        UPDATE
+        sys_user
+        SET
+        name = #{name},
+        card_id = #{cardId},
+        phone = #{phone},
+        birthday = #{birthday},
+        sex = #{sex},
+        login_account = #{loginAccount},
+        is_valid = #{isValid},
+        email = #{email},
+        update_user_id = #{updateUserId},
+        update_time = #{updateTime},
+        remark = #{remark}
+        WHERE id= #{id}
+    </update>
+
+    <!--根据人员编号查询人员信息-->
+    <select id="findObj" parameterType="string" resultMap="resultMap">
+        SELECT
+        a.*,
+        b.name AS sex_name,
+        c.name AS is_valid_name
+        FROM
+        `sys_user` a
+        LEFT JOIN `sys_dictionaries` b
+        ON a.sex = b.value
+        AND b.ref_code = 'sex'
+        LEFT JOIN `sys_dictionaries` c
+        ON a.is_valid = c.value
+        AND b.ref_code = 'is_valid'
+        WHERE 1 = 1
+        <if test="id != null and id != ''">
+            AND a.`id` =#{id}
+        </if>
+        <if test="loginAccount != null and loginAccount != ''">
+            AND a.`login_account` =#{loginAccount}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,141 @@
+plugins {
+    id 'java'
+}
+
+group 'com.damon'
+version '1.0-SNAPSHOT'
+
+allprojects {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    ext{
+        /***常见或主要第三方依赖版本号定义 begin***/
+        globalSpringBootVersion = '2.1.5.RELEASE'
+        globalSpringVersion = "5.1.4.RELEASE"
+        globalMyBatisVersion="2.0.1"
+        globalJunitVersion="4.12"
+        globalSwagger2Version="2.8.0"
+        globalMysqlConnectorVersion = "8.0.16"
+        globalDruidVersion = "1.1.17"
+        globalLombokVersion = "1.18.8"
+
+
+        /***常见或主要第三方依赖版本号定义 end***/
+
+        /****常见或者程序主要引用依赖定义 begin****/
+        //--这个是spring boot要直接compile进去的框架。
+        ref4SpringBoot=[
+                /***spring boot 相关依赖***/
+                "org.springframework.boot:spring-boot:$globalSpringBootVersion",
+                "org.springframework.boot:spring-boot-starter:$globalSpringBootVersion",
+                "org.springframework.boot:spring-boot-starter-web:$globalSpringBootVersion",
+                "org.springframework.boot:spring-boot-starter-freemarker:$globalSpringBootVersion",
+                "org.springframework.boot:spring-boot-devtools:$globalSpringBootVersion"
+        ]
+        //--这个是spring cloud要直接compile进去的框架。
+        ref4SpringCloud=[
+                /***spring boot 相关依赖***/
+                "org.springframework.cloud:spring-cloud-starter-openfeign:2.1.2.RELEASE",
+                "org.springframework.cloud:spring-cloud-starter-oauth2:2.1.2.RELEASE",
+                "org.springframework.cloud:spring-cloud-starter-security:2.1.2.RELEASE"
+        ]
+        //--这个是spring cloud要直接compile进去的框架。
+        ref4SpringData=[
+                /***spring boot 相关依赖***/
+                "org.springframework.data:spring-data-commons:$globalSpringBootVersion"
+        ]
+        //--这个是spring boot要compileOnly的类库
+        ref4SpringBootProvided=[
+                "org.springframework.boot:spring-boot-dependencies:$globalSpringBootVersion",
+        ]
+        //--这个是spring boot的测试框架，用testCompile导入
+        ref4SpringBootTest=[
+                "org.springframework.boot:spring-boot-starter-test:$globalSpringBootVersion"
+        ]
+
+        //--mybatis
+        ref4MyBatis=[
+                "org.mybatis.spring.boot:mybatis-spring-boot-starter:$globalMyBatisVersion"
+        ]
+
+        //--junit
+        ref4Junit=[
+                "junit:junit:$globalJunitVersion"
+        ]
+        //--swagger2
+        ref4Swagger2=[
+                "io.springfox:springfox-swagger2:$globalSwagger2Version",
+                "io.springfox:springfox-swagger-ui:$globalSwagger2Version"
+        ]
+
+        //--mysqlConnector
+        ref4MysqlConnector=[
+                "mysql:mysql-connector-java:$globalMysqlConnectorVersion"
+        ]
+        //--druid
+        ref4Druid=[
+                "com.alibaba:druid:$globalDruidVersion"
+        ]
+        //--lombok
+        ref4Lombok=[
+                "org.projectlombok:lombok:$globalLombokVersion"
+        ]
+        //--freemarker
+        ref4Freemarker=[
+                "org.freemarker:freemarker:2.3.23"
+        ]
+
+    }
+
+    idea {
+        module {
+            inheritOutputDirs = true
+        }
+    }
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+    tasks.withType(GroovyCompile) {
+        groovyOptions.encoding = "MacRoman"
+    }
+
+    // java编译的时候缺省状态下会因为中文字符而失败
+    [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
+
+    repositories {
+        maven{
+            //更换为阿里的仓库
+            //url  'http://maven.aliyun.com/nexus/content/groups/public'
+            url "http://192.168.3.163:8081/nexus/content/groups/public/"
+        }
+        maven{
+            //更换为阿里的仓库
+            url  'http://maven.aliyun.com/nexus/content/groups/public'
+        }
+        //有些jar包在中央仓库是没有的，需要手动添加上去
+        //flatDir {  dirs 'local_jars' }
+        mavenCentral()
+    }
+    configurations {
+        // 所有需要忽略的包定义在此
+        //all*.exclude group: 'commons-httpclient'
+        //all*.exclude group: 'commons-logging'
+        //all*.exclude group: 'commons-beanutils', module: 'commons-beanutils'
+    }
+}
+// 所有子项目的通用配置
+subprojects {
+    dependencies {
+        // 通用依赖
+        //compile ref4SpringBoot
+        //compile ref4SpringData
+        //compile ref4Freemarker
+        //compile ref4Freemarker
+        // 测试依赖
+        //testCompile ref4SpringBootTest
+        //testCompile ref4Junit
+    }
+
+}

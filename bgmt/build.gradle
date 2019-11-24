@@ -1,0 +1,50 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.5.RELEASE'
+    id 'java'
+}
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+apply plugin: 'io.spring.dependency-management'
+group = 'com.damon'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    maven{
+        //更换为阿里的仓库
+        url  'http://maven.aliyun.com/nexus/content/groups/public'
+    }
+    //有些jar包在中央仓库是没有的，需要手动添加上去
+//        flatDir {  dirs 'local_jars' }
+    mavenCentral()
+}
+
+ext {
+    set('springCloudVersion', 'Greenwich.RELEASE')
+}
+
+dependencies {
+
+    compile ref4SpringBoot
+    compile ref4SpringData
+    compile ref4Freemarker
+    compile ref4SpringCloud
+    compile ref4MyBatis
+    compile ('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:2.1.2.RELEASE')
+    compile ('org.springframework.boot:spring-boot-starter-data-redis')
+    compile ('tk.mybatis:mapper-spring-boot-starter:2.0.1')
+
+    compile ('com.alibaba:fastjson:1.2.47')
+    compile ref4Swagger2
+    compile ref4MysqlConnector
+    compile ref4Druid
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.16'
+}
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}

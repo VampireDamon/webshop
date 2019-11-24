@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.damon.bgmt.DAO.OauthClientDetailsDAO">
+    <resultMap id="resultMap" type="com.damon.bgmt.domain.form.OauthClientDetailsForm"/>
+
+    <!-- 多条件分页查询客户端信息-->
+    <select id="findAll" parameterType="string" resultMap="resultMap">
+        SELECT
+        a.*
+        FROM
+        `oauth_client_details` a
+        <if test="clientId != null and clientId != ''">
+            AND a.`client_id` = #{clientId}
+        </if>
+        LIMIT #{pageStart, jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+    </select>
+
+    <!-- 根据条件查询客户端总数-->
+    <select id="findTotal" resultType="int">
+        SELECT
+        COUNT(a.client_id)
+        FROM
+        `oauth_client_details` a
+        WHERE 1=1
+        <if test="clientId != null and clientId != ''">
+            AND a.`client_id` = #{clientId}
+        </if>
+    </select>
+
+    <!-- 插入客户端信息 -->
+    <insert id="add" parameterType="com.damon.bgmt.domain.OauthClientDetails">
+		INSERT INTO
+		    `oauth_client_details` (
+		  `client_id`,
+		  `resource_ids`,
+		  `client_secret`,
+		  `scope`,
+		  `authorized_grant_types`,
+		  `web_server_redirect_uri`,
+		  `authorities`,
+		  `access_token_validity`,
+		  `refresh_token_validity`,
+		  `additional_information`,
+		  `autoapprove`
+		)
+		VALUES
+		  (
+		  #{clientId},
+		  #{resourceIds},
+		  #{clientSecret},
+		  #{scope},
+		  #{authorizedGrantTypes},
+		  #{webServerRedirectUri},
+		  #{authorities},
+		  #{accessTokenValidity},
+		  #{refreshTokenValidity},
+		  #{additionalInformation},
+		  #{autoapprove}
+		  )
+	</insert>
+
+    <!--根据编号删除客户端信息-->
+    <delete id="delete" parameterType="com.damon.bgmt.domain.OauthClientDetails">
+	   delete
+       oauth_client_details
+       WHERE
+       client_id=#{clientId}
+    </delete>
+
+    <!-- 根据ID更新客户端信息 -->
+    <update id="update" parameterType="com.damon.bgmt.domain.OauthClientDetails">
+        UPDATE
+        oauth_client_details
+        SET
+        resource_ids = #{resourceIds},
+        client_secret = #{clientSecret},
+        scope = #{scope},
+        authorized_grant_types = #{authorizedGrantTypes},
+        web_server_redirect_uri = #{webServerRedirectUri},
+        authorities = #{authorities},
+        access_token_validity = #{accessTokenValidity},
+        refresh_token_validity = #{refreshTokenValidity},
+        additional_information = #{additionalInformation},
+        autoapprove = #{autoapprove}
+        WHERE client_id= #{clientId}
+    </update>
+
+    <!--根据编号查询客户端信息-->
+    <select id="findObj" parameterType="string" resultMap="resultMap">
+        SELECT
+        a.*
+        FROM
+        `oauth_client_details` a
+        WHERE 1=1
+        <if test="clientId != null and clientId != ''">
+            AND a.`client_id` =#{clientId}
+        </if>
+    </select>
+
+</mapper>

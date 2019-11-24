@@ -1,0 +1,105 @@
+server:
+  # 程序端口号 (非冲突状态下不用修改)
+  port: 5571
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  application:
+    # 微服务名称(不用修改)
+    name: bgmt
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    password:
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 60
+        max-idle: 8
+        min-idle: 0
+    timeout: 10000
+  servlet:
+    multipart:
+      max-file-size: 300MB
+      max-request-size: 300MB
+  datasource:
+    # 数据库配置(根据部署的不同自行修改)
+    url: jdbc:mysql://localhost:3306/webshop?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 111111
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+mybatis:
+  typeAliasesPackage: com.damon.bgmt.domain
+  mapperLocations: classpath:mapper/*.xml
+  configuration:
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+    log-prefix: dao.
+    auto-mapping-behavior: full
+#mapper:
+  #mappers: com.karle.tk.TkMapper
+eureka:
+  instance:
+    #ip-address: 127.0.0.1
+    #instance-id: 127.0.0.1:bgmt:8080
+    prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 30
+    lease-renewal-interval-in-seconds: 10
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      # 注册中心地址(根据部署的不同自行修改)
+      defaultZone: http://${eureka.host:127.0.0.1}:${eureka.port:8762}/eureka/
+  httpclient:
+    connection-timeout: 90000
+auth-server-url: http://127.0.0.1:${server.port} # 授权服务地址
+auth-token-url: http://127.0.0.1:${server.port}/oauth/token # 授权token服务地址
+auth-authorize-url: http://127.0.0.1:${server.port}/oauth/authorize # 用户授权服务地址
+security:
+  oauth2:
+    client:
+      client-id: client_1
+      client-secret: user
+      access-token-uri: ${auth-token-url}
+      user-authorization-uri: ${auth-authorize-url}
+  feign:
+    httpclient:
+      connection-timeout: 90000
+ribbon:
+  ConnectTimeout: 50000
+logging:
+  level:
+    root: info
+    org.springframework.web: debug
+    org.springframework.security: debug
+  config: classpath:logback-spring.xml
+#mapper:
+  #mappers: tk.mybatis.mapper.common.Mapper
+---
+#测试环境配置(以profiles=test启动时修改以下内容,否则不用动)
+spring:
+  profiles: test
+  datasource:
+    platform: mysql
+    url: jdbc:mysql://localhost:3306/demo?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 300900
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password:
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 60
+        max-idle: 8
+        min-idle: 0
+    timeout: 10000
+auth-server-url: http://106.13.231.226:${server.port} # 服务地址
+auth-token-url: http://106.13.231.226:${server.port}/oauth/token # 授权token服务地址
+auth-authorize-url: http://106.13.231.226:${server.port}/oauth/authorize # 用户授权服务地址

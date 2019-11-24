@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.damon.bgmt.DAO.SysParamDAO">
+    <resultMap id="resultMap" type="com.damon.bgmt.domain.form.SysParamForm"/>
+
+    <!-- 多条件分页查询系统配置信息-->
+    <select id="findAll" parameterType="string" resultMap="resultMap">
+        SELECT
+        a.*,
+        b.`name` AS is_valid_name
+        FROM
+        `sys_param` a
+        LEFT JOIN `sys_dictionaries` b
+        ON a.is_valid = b.value
+        AND b.ref_code = 'is_valid'
+        WHERE 1=1
+        <if test="name != null and name != ''">
+            AND a.`name` LIKE concat('%',#{name}, '%')
+        </if>
+        <if test="configKey != null and configKey != ''">
+            AND a.`config_key` = #{configKey}
+        </if>
+        ORDER BY a.`serial` ASC
+        LIMIT #{pageStart, jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+    </select>
+
+    <!-- 多条件查询系统配置总数-->
+    <select id="findTotal" resultType="int">
+        SELECT
+        COUNT(a.`id`)
+        FROM
+        `sys_param` a
+        WHERE 1=1
+        <if test="name != null and name != ''">
+            AND a.`name` LIKE concat('%',#{name}, '%')
+        </if>
+        <if test="configKey != null and configKey != ''">
+            AND a.`config_key` = #{configKey}
+        </if>
+    </select>
+
+    <!-- 添加系统配置信息 -->
+    <insert id="add" parameterType="com.damon.bgmt.domain.SysParam">
+        INSERT INTO
+            sys_param
+            (id,name,config_key,config_value,is_valid,serial,
+           `update_user_id`,
+		  `update_time`,
+		  `create_user_id`,
+		  `create_time`,
+           remark)
+        VALUES
+            (#{id},#{name},#{configKey},#{configValue},#{isValid},#{serial},
+            #{updateUserId},
+		    #{updateTime},
+		    #{creatUserId},
+		    #{createTime},
+            #{remark})
+        ON DUPLICATE KEY UPDATE
+            name=VALUES(name),config_key=VALUES(config_key),config_value=VALUES(config_value),
+            is_valid=VALUES(is_valid),serial=VALUES(serial),
+            serial=VALUES(serial),
+            update_user_id=VALUES(update_user_id),
+            update_time=VALUES(update_time),
+            create_user_id=VALUES(create_user_id),
+            create_time=VALUES(create_time),
+            remark=VALUES(remark)
+    </insert>
+
+    <!--根据编号删除系统配置信息-->
+    <delete id="delete" parameterType="string">
+       delete
+       FROM
+           sys_param
+       WHERE
+           id=#{id}
+    </delete>
+
+    <!-- 根据编号更新系统配置信息 -->
+    <update id="update" parameterType="com.damon.bgmt.domain.SysParam">
+        UPDATE
+            sys_param
+        SET
+            config_value = #{configValue},
+            is_valid = #{isValid},
+            serial = #{serial},
+            update_user_id = #{updateUserId},
+            update_time = #{updateTime},
+            remark = #{remark},
+            name = #{name}
+        WHERE id= #{id}
+    </update>
+
+    <!--根据编号查询系统配置信息-->
+    <select id="findObj" parameterType="string" resultMap="resultMap">
+        SELECT
+            a.*,
+            b.`name` AS is_valid_name
+        FROM
+            `sys_param` a
+        LEFT JOIN `sys_dictionaries` b
+        ON a.is_valid = b.value
+        AND b.ref_code = 'is_valid'
+        WHERE 1=1
+        <if test="id != null and id != ''">
+            AND a.`id` = #{id}
+        </if>
+        <if test="configKey != null and configKey != ''">
+            AND a.`config_key` = #{configKey}
+        </if>
+    </select>
+
+    <!--根据key查询系统配置信息-->
+    <select id="findList" parameterType="string" resultMap="resultMap">
+        SELECT
+            a.*,
+            b.`name` AS is_valid_name
+        FROM
+            `sys_param` a
+        LEFT JOIN `sys_dictionaries` b
+        ON a.is_valid = b.value
+        AND b.ref_code = 'is_valid'
+        WHERE 1=1
+    </select>
+
+</mapper>
